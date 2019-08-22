@@ -5,6 +5,9 @@
 int       pinA  = 22;                                         // Pins used to control the system
 int       pinB  = 23;
 int       pinC  = 24;
+/*
+ *  Put as many pins as you need
+ */
 int       pinD  = 25;
 int       pinE  = 26;
 int       pinF  = 27;
@@ -28,7 +31,10 @@ void setStage(int stage){           // This function sets the output pins as req
     digitalWrite(pinA,LOW);
     digitalWrite(pinB,HIGH);
     digitalWrite(pinC,HIGH);
-    digitalWrite(pinD,HIGH);
+/*
+ *  Pins used to control what you need: Motors, regulators, etc.
+ */
+    digitalWrite(pinD,HIGH);       
     digitalWrite(pinE,HIGH);
     digitalWrite(pinF,HIGH);
     
@@ -72,81 +78,14 @@ void setStage(int stage){           // This function sets the output pins as req
     lcd.print("50 W");
     }
 
-   if (stage == 2){                   // Third stage: 75 W
-    digitalWrite(pinA,HIGH);
-    digitalWrite(pinB,HIGH);
-    digitalWrite(pinC,LOW);
-    digitalWrite(pinD,HIGH);
-    digitalWrite(pinE,HIGH);
-    digitalWrite(pinF,HIGH);
-
-    lcd.clear();
-    lcd.setCursor(2,0);
-    lcd.print("RPM");
+/*    
+ *    #######################################################
+ * 
+ *      Put as many stages as you need to control the system
+ * 
+ *    #######################################################
+ */    
    
-    lcd.setCursor(6,0);
-    lcd.print("||");
-  
-    lcd.setCursor(9,0);
-    lcd.print("CARGA");
-  
-    lcd.setCursor(6,1);
-    lcd.print("||");
-    
-    lcd.setCursor(9,1);
-    lcd.print("75 W");
-    }
-
-   if (stage == 3){                   // Fourth stage: 100 W
-    digitalWrite(pinA,HIGH);
-    digitalWrite(pinB,HIGH);
-    digitalWrite(pinC,HIGH);
-    digitalWrite(pinD,LOW);
-    digitalWrite(pinE,HIGH);
-    digitalWrite(pinF,HIGH);
-
-    lcd.clear();
-    lcd.setCursor(2,0);
-    lcd.print("RPM");
-   
-    lcd.setCursor(6,0);
-    lcd.print("||");
-  
-    lcd.setCursor(9,0);
-    lcd.print("CARGA");
-  
-    lcd.setCursor(6,1);
-    lcd.print("||");
-    
-    lcd.setCursor(9,1);
-    lcd.print("100 W");
-    }
-
-   if (stage == 4){                   // Fifth stage: 125 W
-    digitalWrite(pinA,HIGH);
-    digitalWrite(pinB,HIGH);
-    digitalWrite(pinC,HIGH);
-    digitalWrite(pinD,HIGH);
-    digitalWrite(pinE,LOW);
-    digitalWrite(pinF,HIGH);
-
-    lcd.clear();
-    lcd.setCursor(2,0);
-    lcd.print("RPM");
-   
-    lcd.setCursor(6,0);
-    lcd.print("||");
-  
-    lcd.setCursor(9,0);
-    lcd.print("CARGA");
-  
-    lcd.setCursor(6,1);
-    lcd.print("||");
-    
-    lcd.setCursor(9,1);
-    lcd.print("125 W");
-    }
-
    if (stage == 5){                    // sixth stage: 150 W
     digitalWrite(pinA,LOW);
     digitalWrite(pinB,HIGH);
@@ -174,7 +113,7 @@ void setStage(int stage){           // This function sets the output pins as req
   
   } // End of the setStage function
 
-void setRPM(void){
+void setRPM(void){                                           // This function sets the RPM of the user in the LCD
   
   sensorValue = analogRead(A0);
       
@@ -185,7 +124,7 @@ void setRPM(void){
   if ((sensorValue > 680.0) && (rp == 1)){
     current_time = millis();
     lcd.setCursor(2,1);
-    lcd.print(60000/(current_time - past_time));
+    lcd.print(60000/(current_time - past_time));            // Efficient way to measure the RPM
     rp = 0;
   }
  
@@ -205,9 +144,9 @@ void setup() {
   pinMode(start,INPUT);
 
   
-  lcd.begin(16, 2);
+  lcd.begin(16, 2);                 
  
-  lcd.setCursor(4,0);
+  lcd.setCursor(4,0);                                         // Put some greetings and information on the screen
   lcd.print("WELCOME!");
   delay(3000);
   lcd.clear();
@@ -238,7 +177,7 @@ void loop() {
   buttonState = digitalRead(start);
 
  
-  if (buttonState == HIGH){
+  if (buttonState == HIGH){                                             //    Condition needed to the user start the test
     stateStart = 1;
     delay(10);
   }
@@ -259,35 +198,20 @@ void loop() {
       }
       setRPM();
     } // -- ########  
-    if ((millis() > (2*stageTime)) && (millis() < (3*stageTime))){      //    Third stage, 2-minute pedaling: 75 W
-      if (pins_up == 0){
-        setStage(stage);
-        stage++;
-        pins_up = 1;
-      }
-      setRPM();
-    } // -- ########
-    if ((millis() > (3*stageTime)) && (millis() < (4*stageTime))) {     //    Fourth stage, 2-minute pedaling: 100 W
-      if (pins_up == 1){
-        setStage(stage);
-        stage++;
-        pins_up = 0;
-      }
-      setRPM();
-    } // -- ########
-    if ((millis() > (4*stageTime)) && (millis() < (5*stageTime))) {     //    Fifth stage, 2-minute pedaling: 125 W
-      if (pins_up == 0){
-        setStage(stage);
-        stage++;        
-        pins_up = 1;
-      }
-      setRPM();
-    } // -- ########
+
+/*    
+ *    #######################################################
+ * 
+ *      Put as many stages as you need to control the system
+ * 
+ *    #######################################################
+ */
+    
     if ((millis() > (5*stageTime)) && (millis() < (6*stageTime))) {     //    Sixth stage, 2-minute pedaling: 150 W
-      if (pins_up == 1){
+      if (pins_up == 0){
         setStage(stage);
         stage++;        
-        pins_up = 0;
+        pins_up = 1;
       }
       setRPM();
     } // -- ########
