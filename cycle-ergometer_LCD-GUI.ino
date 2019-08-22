@@ -2,58 +2,27 @@
 #include <LiquidCrystal.h>
 
 
-int       pinA  = 22;
+int       pinA  = 22;                                         // Pins used to control the system
 int       pinB  = 23;
 int       pinC  = 24;
 int       pinD  = 25;
 int       pinE  = 26;
 int       pinF  = 27;
 
-float     sensorValue;
-unsigned long    past_time = 0, current_time = 0;
-unsigned long stageTime = 1000 * 20;                      //  1000 (1 sec) * 60 (1 min) * 2 (2 minutes)
-int pins_up = 0;
-int stage = 0;
-int rp = 0, buttonState, stateStart = 0;
-const int rs = 44, en = 45, d0 = 46, d1 = 47, d2 = 48, d3 = 49, d4 = 50, d5 = 51, d6 = 52, d7 = 53;
+float            sensorValue;                                 //  Variable to store the analog value of the RPM sensor
+unsigned long    past_time = 0, current_time = 0;             //  Variables to store the running time
+unsigned long    stageTime = 1000 * 60 * 2;                   //  1000 (1 sec) * 60 (1 min) * 2 (2 minutes)
+int              pins_up = 0;                                 //  Variable to enable each stage
+int              stage = 0;                                   //  Variable to set the current state
+int              rp = 0, buttonState, stateStart = 0;
+const int        rs = 44, en = 45, d0 = 46, d1 = 47, d2 = 48, d3 = 49, d4 = 50, d5 = 51, d6 = 52, d7 = 53;          // Pins used to control the LCD
 const int start = 42;
-LiquidCrystal lcd(rs, en, d0, d1, d2, d3, d4, d5, d6, d7);
+LiquidCrystal lcd(rs, en, d0, d1, d2, d3, d4, d5, d6, d7);   // Initialazing the LCD with lcd variable
 
 
-// the setup routine runs once when you press reset:
-void setup() {
-  
-  pinMode(pinA, OUTPUT);
-  pinMode(pinB, OUTPUT);
-  pinMode(pinC, OUTPUT);
-  pinMode(pinD, OUTPUT);
-  pinMode(pinE, OUTPUT);
-  pinMode(pinF, OUTPUT);
-  
-  pinMode(start,INPUT);
-
-  
-  lcd.begin(16, 2);
- 
-  lcd.setCursor(3,0);
-  lcd.print("BIENVENIDO!");
-  delay(3000);
-  lcd.clear();
-  
-  lcd.setCursor(0,0);
-  lcd.print("Cicloergometro");   
-  lcd.setCursor(0,1);
-  lcd.print("en modo \"Prueba\"");
-  delay (3000);
-
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("PRESIONE INICIAR");
-  
-}
 
 
-void setStage(int stage){
+void setStage(int stage){           // This function sets the output pins as required for designer
 
   if (stage == 0){                  // First stage: 25 W
     digitalWrite(pinA,LOW);
@@ -222,10 +191,41 @@ void setRPM(void){
  
  } // End of the setRPM function
 
+
+ 
+void setup() {
+  
+  pinMode(pinA, OUTPUT);                                      // Set up the control pins as outputs
+  pinMode(pinB, OUTPUT);
+  pinMode(pinC, OUTPUT);
+  pinMode(pinD, OUTPUT);
+  pinMode(pinE, OUTPUT);
+  pinMode(pinF, OUTPUT);
+  
+  pinMode(start,INPUT);
+
+  
+  lcd.begin(16, 2);
+ 
+  lcd.setCursor(4,0);
+  lcd.print("WELCOME!");
+  delay(3000);
+  lcd.clear();
+  
+  lcd.setCursor(4,0);
+  lcd.print("CPE Test");   
+  lcd.setCursor(2,1);
+  lcd.print("Do your best!");
+  delay (3000);
+
+  lcd.clear();
+  lcd.setCursor(2,0);
+  lcd.print("Press BEGIN");
+  
+}
   
   
 
-// the loop routine runs over and over again forever:
 void loop() {
     
   // Can either use type int or float to store voltage, int takes up less memory and is recommend
@@ -250,7 +250,7 @@ void loop() {
         pins_up = 1;
       }
       setRPM();      
-    } // -- ########
+    } // -- ########     
     if ((millis() > stageTime) && (millis() < (2*stageTime))){          //    Second stage, 2-minute pedaling: 50 W. 
       if (pins_up == 1){
         setStage(stage);
@@ -290,7 +290,14 @@ void loop() {
         pins_up = 0;
       }
       setRPM();
-    } // -- ########     
+    } // -- ########
+    if (millis() > (6*stageTime)){
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("The test has");
+      lcd.setCursor(0,1);
+      lcd.print("been ended");
+    }           
   } 
 }// -- ########  End of code!      
   
